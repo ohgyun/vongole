@@ -9,56 +9,58 @@ Using Vongole, you can give a step-by-step guide to how it works.
 
 1. Set up demo codes.
 
-````js
-step('Step 1', function () {
-
-  before(function () {
-    // code called before running a step
-  });
-
-  item('Item A', function () {
-   
-    code(function () {
-      // execution code of item A
-    });
-    
-    debug(function () {
-      // [optional] code for debugging
-    });
-    
-    ninja(function () {
-      // [optional] code to execute silently after running itme
-    });
-    
-  });
+    ````js
+    step('Step 1', function () {
   
-  item('Item B', function () {
-    code(function () {});
-    debug(function () {});
-    ninja(function () {});
-  });
+      before(function () {
+        // code called before running a step
+      });
   
-  after(function () {
-    // code called after running a step
-  });
-
-});
-
-step('Step 2', function () {
-  before(function () {});
-  item('Item 2A', ... );
-  item('Item 2B', ... );
-  after(function () {});
-});
-
-````
+      item('Item A', function () {
+     
+        code(function () {
+          // execution code of item A
+        });
+      
+        debug(function () {
+          // [optional] code for debugging
+        });
+      
+        ninja(function () {
+        // [optional] code to execute silently after running itme
+        });
+      
+      });
+    
+      item('Item B', function () {
+        code(function () {});
+        debug(function () {});
+        ninja(function () {});
+      });
+    
+      after(function () {
+        // code called after running a step
+      });
+  
+    });
+  
+    step('Step 2', function () {
+      before(function () {});
+      item('Item 2A', ... );
+      item('Item 2B', ... );
+      after(function () {});
+    });
+    ````
 
 2. Run demo using run() methods.
 
-````js
-run(); // run first step
-
-run(2); // run third step (index of 2)
-
-runItem(0): // run item with index 0 of current step
-````
+    ````js
+    run(); // run first step
+    
+    run(2); // run third step (index of 2)
+    
+    runItem(0): // run item with index 0 of current step
+    
+    nextStep(); // move to next step
+    prevStep(); // move to previous step
+    ````
