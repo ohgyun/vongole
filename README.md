@@ -27,7 +27,7 @@ Using Vongole, you can give a step-by-step guide to how it works.
         });
       
         ninja(function () {
-        // [optional] code to execute silently after running itme
+          // [optional] code to execute silently after running itme
         });
       
       });
