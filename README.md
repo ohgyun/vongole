@@ -7,7 +7,13 @@ Using Vongole, you can give a step-by-step guide to how it works.
 
 ## Usage
 
-1. Set up demo codes.
+1. Add the script file.
+
+    ````html
+    <script src="vongole.js"></script>
+    ````
+
+2. Set up demo codes.
 
     ````js
     step('Step 1', function () {
@@ -52,7 +58,7 @@ Using Vongole, you can give a step-by-step guide to how it works.
     });
     ````
 
-2. Run demo using run() methods.
+3. Run demo using run() methods.
 
     ````js
     run(); // run first step
