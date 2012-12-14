@@ -8,9 +8,10 @@
 (function (g) {
  
   var v = g.vongole = {
-      version: '0.1',
+      version: '0.1.1',
       handler: {},
-      steps: []
+      steps: [],
+      debug: false
     },
   
     _step = null,
@@ -108,7 +109,7 @@
     !_item && error('item with index {0} does not exist', idx);
     
     _item.ret = _item.code && _item.code();
-    _item.debug && _item.debug.call(_item);
+    v.debug && _item.debug && _item.debug.call(_item);
     _item.ninja && _item.ninja.call(_item);
     
     v.handler.onRunItem && v.handler.onRunItem(_item);
