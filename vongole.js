@@ -13,8 +13,12 @@
       debug: false
     },
 
-    _steps = [],  
+    // all steps
+    _steps = [],
+
+    // event handlers  
     _handlers = {},
+
     _step = null,
     _item = null,
     _cursor = 0;
@@ -171,6 +175,7 @@
   // register events
   v.on = function (key, handler) {
     handlers(key).push(handler);
+    return this;
   };
 
   // get handlers
