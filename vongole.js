@@ -6,6 +6,8 @@
  * https://github.com/ohgyun/vongole/
  */
 (function (g) {
+
+  'use strict';
  
   var v = g.vongole = {
       VERSION: '0.2',
@@ -101,7 +103,7 @@
     
     trigger('run', _step);
   };
-  
+
   // run previous step
   g.prevStep = function () {
     moveStep(function () {
@@ -192,8 +194,8 @@
       args = Array.prototype.slice.call(arguments, 1);
 
     for (; i < len; i++) {
-      hs[i].apply(this, args);
+      hs[i].apply(v, args);
     } 
-  };
+  }
 
 }(this));

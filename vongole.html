@@ -14,16 +14,12 @@
       console.log('before step 1');
     });
 
-    after(function () {
-      console.log('after step 1');
-    });
-    
     item('Item 1', function () {
       desc(function () {
         return 'This is Item 1';
       });
       code(function () {
-        alert('Item 1');
+        console.log('Run Item 1');
         return 'abc';
       });
       debug(function () {
@@ -47,9 +43,13 @@
       });
     });
     
+    after(function () {
+      console.log('after step 1');
+    });
+
   });
 
-  vongole.on('run', function function (step) {
+  vongole.on('run', function (step) {
     console.log('run handler : ', step);
   });
   vongole.on('runItem', function (item) {
