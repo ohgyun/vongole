@@ -10,7 +10,7 @@
   'use strict';
  
   var v = g.vongole = {
-      VERSION: '0.2',
+      VERSION: '0.2.0',
       title: '',
       debug: false
     },

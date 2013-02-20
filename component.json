@@ -1,0 +1,6 @@
+{
+  "name": "vongole",
+  "version": "0.2.0",
+  "main": "./vongole.js",
+  "dependencies": {}
+}
