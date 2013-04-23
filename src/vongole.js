@@ -8,9 +8,8 @@
 (function (g) {
 
   'use strict';
- 
+
   var v = g.vongole = {
-      VERSION: '0.2.0',
       title: '',
       debug: false
     },
@@ -24,17 +23,17 @@
     _step = null,
     _item = null,
     _cursor = 0;
-  
+
   function error(str) {
     var regexp = /(\{(\d)\})/;
 
     while (regexp.test(str)) {
       str = str.replace(regexp, arguments[+RegExp.$2 + 1]);
     }
-    
-    throw '[vongole] ' + str; 
+
+    throw '[vongole] ' + str;
   }
-  
+
   // define title of demo
   g.title = function (title) {
     v.title = title;
