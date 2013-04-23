@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vongole - JavaScript Demoing Framework</title>
+</head>
+<body>
+<script src="../src/vongole.js"></script>
+<script>
+
+  step('Step 1', function () {
+    
+    before(function () {
+      console.log('before step 1');
+    });
+
+    item('Item 1', function () {
+      desc(function () {
+        return 'This is Item 1';
+      });
+      code(function () {
+        console.log('Run Item 1');
+        return 'abc';
+      });
+      debug(function () {
+        console.log('This is debug and code returns ', this.result);
+      });
+      ninja(function () {
+        console.log('This is ninja');
+      });
+    });
+    
+    item('Item 2', function () {
+      code(function () {
+        console.log('This is code2');
+        return 'abc';
+      });
+      debug(function () {
+        console.log('This is debug2 and code returns ', this.result);
+      });
+      ninja(function () {
+        console.log('This is ninja2');
+      });
+    });
+    
+    after(function () {
+      console.log('after step 1');
+    });
+
+  });
+
+  vongole.on('run', function (step) {
+    console.log('run handler : ', step);
+  });
+  vongole.on('runItem', function (item) {
+    console.log('item handler : ', item);
+  });
+
+  run();
+  runItem(0);
+  runItem(1);
+</script>
+
+</body>
+</html>
