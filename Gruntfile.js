@@ -1,6 +1,6 @@
 module.exports = function (grunt) {
 
-  // 라이브리로드를 위한 코드 파일
+  // Code snippets for livereload
   // https://github.com/gruntjs/grunt-contrib-livereload
   var path = require('path');
   var lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet;
@@ -12,7 +12,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    // 라이브리로드를 위한 웹서버 설정
+    // connect web server for livereload
     connect: {
       livereload: {
         options: {
@@ -24,7 +24,8 @@ module.exports = function (grunt) {
         }
       }
     },
-    // 서버 개발 및 마크업 개발 시 파일 변경 감시를 위한 왓치 도구
+
+    // watch tool for livereload
     regarde: {
       development: {
         files: [
