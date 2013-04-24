@@ -5,61 +5,73 @@
 <title>Vongole - JavaScript Demoing Framework</title>
 </head>
 <body>
-<script src="vongole.js"></script>
+<script src="../src/vongole.js"></script>
 <script>
+beforeEachStep(function () {
+  console.log('Before each step');
+});
 
-  step('Step 1', function () {
-    
+afterEachStep(function () {
+  console.log('After each step');
+});
+
+step('Step 1', function () {
+
+  before(function () {
+    console.log('Before step 1');
+  });
+
+  beforeEachItem(function () {
+    console.log('Before each item in step 1');
+  });
+
+  afterEachItem(function () {
+    console.log('After each item in step 1');
+  });
+
+  item('Item 1', function () {
     before(function () {
-      console.log('before step 1');
+      console.log('Before item 1');
     });
 
-    item('Item 1', function () {
-      desc(function () {
-        return 'This is Item 1';
-      });
-      code(function () {
-        console.log('Run Item 1');
-        return 'abc';
-      });
-      debug(function () {
-        console.log('This is debug and code returns ', this.result);
-      });
-      ninja(function () {
-        console.log('This is ninja');
-      });
+    desc(function () {
+      return 'This is Item 1';
     });
-    
-    item('Item 2', function () {
-      code(function () {
-        console.log('This is code2');
-        return 'abc';
-      });
-      debug(function () {
-        console.log('This is debug2 and code returns ', this.result);
-      });
-      ninja(function () {
-        console.log('This is ninja2');
-      });
+
+    code(function () {
+      console.log('Run Item 1');
+      return 'abc';
     });
-    
+
+    debug(function () {
+      console.log('This is debug and code returns ', this.result);
+    });
+
+    ninja(function () {
+      console.log('This is ninja');
+    });
+
     after(function () {
-      console.log('after step 1');
+      console.log('After run item 1');
     });
-
   });
 
-  vongole.on('run', function (step) {
-    console.log('run handler : ', step);
-  });
-  vongole.on('runItem', function (item) {
-    console.log('item handler : ', item);
+  after(function () {
+    console.log('after step 1');
   });
 
-  run();
-  runItem(0);
-  runItem(1);
+});
+
+vongole.on('run', function (step) {
+  console.log('run handler : ', step);
+});
+vongole.on('runItem', function (item) {
+  console.log('item handler : ', item);
+});
+
+run();
+runItem(0);
+runItem(1);
 </script>
-
 </body>
 </html>

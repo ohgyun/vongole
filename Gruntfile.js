@@ -12,6 +12,10 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    livereload: {
+      port: 35729
+    },
+
     // connect web server for livereload
     connect: {
       livereload: {
@@ -47,8 +51,8 @@ module.exports = function (grunt) {
           ' * <%= pkg.name %> v<%= pkg.version %> - <%= pkg.description %>',
           ' * <%= pkg.repository.url %>',
           ' *',
-          ' * (c) 2013, <%= pkg.author %>',
-          ' * MIT License',
+          ' * (c) 2012-2013, <%= pkg.author %>',
+          ' * <%= pkg.license %> License',
           ' */',
           ''
         ].join('\n'),
@@ -89,7 +93,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('livereload', ['livereload-start', 'connect', 'regarde']);
+  grunt.registerTask('reload', ['livereload-start', 'connect', 'regarde']);
   grunt.registerTask('build', ['clean', 'concat', 'uglify']);
   grunt.registerTask('release', ['clean', 'concat', 'uglify', 'copy']);
 

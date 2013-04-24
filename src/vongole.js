@@ -1,17 +1,17 @@
-/*!
- * Vongole - JavaScript Demoing Framework
- * 
- * Copyright 2012 Ohgyun Ahn
- * MIT Licensed
- * https://github.com/ohgyun/vongole/
- */
 (function (g) {
 
   'use strict';
 
+  var EMPTY_STR = '',
+    EMPTY_FUNC = function () { return EMPTY_STR; };
+
   var v = g.vongole = {
-      title: '',
-      debug: false
+      title: EMPTY_STR,
+      debug: false,
+      beforeEachItem: EMPTY_FUNC,
+      afterEachItem: EMPTY_FUNC,
+      beforeEachStep: EMPTY_FUNC,
+      afterEachStep: EMPTY_FUNC
     },
 
     // all steps
@@ -20,10 +20,13 @@
     // event handlers  
     _handlers = {},
 
+    // current focused
     _step = null,
     _item = null,
     _cursor = 0;
 
+  // throw error 
+  // usage: error('error {0} {1}', 'foo', 'bar');
   function error(str) {
     var regexp = /(\{(\d)\})/;
 
@@ -34,128 +37,302 @@
     throw '[vongole] ' + str;
   }
 
-  // define title of demo
+  /**
+   * Define a title of the demo.
+   *
+   * @param {String} title
+   */
   g.title = function (title) {
     v.title = title;
   };
 
-  // define step
+  /**
+   * Define a step.
+   *
+   * @param {String} title Title of step
+   * @param {Function} def Definition of step
+   */
   g.step = function (title, def) {
     var step = {
-      title: title || '',
-      items: []
+      title: title || EMPTY_STR,
+      items: [],
+      before: EMPTY_FUNC,
+      after: EMPTY_FUNC,
+      beforeEachItem: EMPTY_FUNC,
+      afterEachItem: EMPTY_FUNC
     };
     _steps.push(step);
     _step = step;
-    
+
     def();
+
+    _step = null;
   };
-  
-  // define each item in step
+
+  /**
+   * Define a item in step.
+   *
+   * @param {String} title Title of item
+   * @param {Function} def Definition of item
+   */
   g.item = function (title, def) {
-    !_step && error('item() should be called in step definition');
-    
+    if ( ! step) error('item() should be called in step definition');
+
     var item = {
-      title: title || ''
+      title: title || EMPTY_STR,
+      desc: EMPTY_FUNC,
+      code: EMPTY_FUNC,
+      debug: EMPTY_FUNC,
+      ninja: EMPTY_FUNC,
+      before: EMPTY_FUNC,
+      after: EMPTY_FUNC
     };
     _step.items.push(item);
     _item = item;
-    
+
     def();
+
+    _item = null;
   };
-  
-  // define description of item
+
+  /**
+   * Define description of item.
+   *
+   * @param {Function} f
+   */
   g.desc = function (f) {
     defineItemMethod('desc', f);
   };
 
-  // define execution code of item
+  /**
+   * Define execution code of item.
+   *
+   * @param {Function} f
+   */
   g.code = function (f) {
     defineItemMethod('code', f);
   };
-  
-  // define code for debugging 
-  // if vongole.debug value is true,
-  // this code is runned after running item
+
+  /**
+   * Define code for debugging.
+   * This code would be run after execution code of item,
+   * only `vongole.debug` value is true.
+   *
+   * @param {Function} f
+   */
   g.debug = function (f) {
     defineItemMethod('debug', f);
   };
-  
-  // define code to execute silently after running item
+
+  /**
+   * Define code to execute sliently, after execution code of item.
+   *
+   * @param {Function} f
+   */
   g.ninja = function (f) {
     defineItemMethod('ninja', f);
   };
-  
+
+  // define item method
+  // @param {String} name Function name
+  // @param {Function} f
   function defineItemMethod(name, f) {
-    !_item && error('{0}() should be called in item definition', name);
+    if ( ! _item) {
+      error('{0}(handler) should be called in item definition', name);
+    }
+
+    if (typeof f !== 'function') {
+      error('{0}(handler) should have a function parameter', name);
+    }
+
     _item[name] = f;
   }
- 
-  // run step 
+
+  /**
+   * Run a step.
+   *
+   * @param {Number} [idx] Index of step. (default = 0)
+   */
   g.run = function (idx) {
-    _cursor = idx || _cursor;
+    if (_item) {
+      // after hook
+      _item.after();
+      _step.afterEachItem();
+      v.afterEachItem();
+      _item = null;
+    }
+
+    if (_step) {
+      // after hook
+      _step.after();
+      v.afterEachStep();
+    }
+
+    _cursor = isNaN(idx) ? _cursor : idx;
     _step = _steps[_cursor];
-    
-    !_step && error('step with index {0} does not exist', _cursor);
-    
-    _step.before && _step.before();
-    
+
+    if ( ! _step) error('step with index {0} does not exist', _cursor);
+
+    // before hook
+    v.beforeEachStep();
+    _step.before();
+
     trigger('run', _step);
   };
 
-  // run previous step
+  /**
+   * Run previous step.
+   */
   g.prevStep = function () {
     moveStep(function () {
       _cursor--;
     });
   };
-  
-  // run next step
+
+  /**
+   * Run next step.
+   */
   g.nextStep = function () {
     moveStep(function () {
       _cursor++;
     });
   };
-  
+
   function moveStep(f) {
-    _step && _step.after && _step.after();
     f();
     g.run();
   }
-  
-  // reset demo
-  g.reset = function () {
-    _step = null;
-    _item = null;
-    _cursor = 0;
-  };
-  
-  // run item
+
+  /**
+   * Run a item in step.
+   *
+   * @param {Number} idx Index of item
+   */
   g.runItem = function (idx) {
+    if (_item) {
+      // after hook
+      _item.after();
+      _step.afterEachItem();
+      v.afterEachItem();
+    }
+
     _item = _step.items[idx];
-    
-    !_item && error('item with index {0} does not exist', idx);
-   
-    _item.description = _item.desc && _item.desc.call(_item); 
-    _item.result = _item.code && _item.code.call(_item);
-    v.debug && _item.debug && _item.debug.call(_item);
-    _item.ninja && _item.ninja.call(_item);
-    
+
+    if ( ! _item) {
+      error('item with index {0} does not exist', idx);
+    }
+
+    // before hook
+    v.beforeEachItem();
+    _step.beforeEachItem();
+    _item.before();
+
+    // run item
+    _item.description = _item.desc.call(_item);
+    _item.result = _item.code.call(_item);
+    if (v.debug) { _item.debug.call(_item); }
+    _item.ninja.call(_item);
+
     trigger('runItem', _item);
   };
-  
-  // define code to execute before running each step
+
+  /**
+   * Define code to execute before running step or item.
+   *
+   * @param {Function} f
+   */
   g.before = function (f) {
-    !_step && error('before() should be called in step definition');
-    _step.before = f;
+    if (_item) {
+      _item.before = f;
+      return;
+    }
+    if (_step) {
+      _step.before = f;
+      return;
+    }
+
+    error('before() should be called in step or item definition');
   };
-  
-  // define code to execute after running each step
+
+  /**
+   * Define code to execute after running step or item.
+   *
+   * @param {Function} f
+   */
   g.after = function (f) {
-    !_step && error('after() should be called in step definition');
-    _step.after = f;
+    if (_item) {
+      _item.after = f;
+      return;
+    }
+
+    if (_step) {
+      _step.after = f;
+      return;
+    }
+
+    error('after() should be called in step or item definition');
   };
-  
+
+  /**
+   * Define code to execute before running EACH item.
+   *
+   * @param {Function} f
+   */
+  g.beforeEachItem = function (f) {
+    if (_item) {
+      error('{0}() cannot be called in item definition', 'beforeEachItem');
+    }
+
+    if (_step) {
+      _step.beforeEachItem = f;
+      return;
+    }
+
+    v.beforeEachItem = f;
+  };
+
+  /**
+   * Define code to execute after running EACH item.
+   *
+   * @param {Function} f
+   */
+  g.afterEachItem = function (f) {
+    if (_item) {
+      error('{0}() cannot be called in item definition', 'afterEachItem');
+    }
+
+    if (_step) {
+      _step.afterEachItem = f;
+      return;
+    }
+
+    v.afterEachItem = f;
+  };
+
+  /**
+   * Define code to execute before running EACH step.
+   *
+   * @param {Function} f
+   */
+  g.beforeEachStep = function (f) {
+    if (_step || _item) {
+      error('{0}() should be called out of step definition', 'beforeEachStep');
+    }
+    v.beforeEachStep = f;
+  };
+
+  /**
+   * Define code to execute after running EACH step.
+   *
+   * @param {Function} f
+   */
+  g.afterEachStep = function (f) {
+    if (_step || _item) {
+      error('{0}() should be called out of step definition', 'afterEachStep');
+    }
+    v.afterEachStep = f;
+  };
+
   // get status of current step
   g.getStatus = function () {
     var len = _steps.length,
@@ -163,7 +340,7 @@
       isLast = _cursor === len - 1;
 
     return {
-      total: len, 
+      total: len,
       current: _cursor,
       isSingle: len === 1,
       isFirst: isFirst,
@@ -171,6 +348,15 @@
       hasNext: !isLast && len > 1,
       hasPrev: !isFirst && len > 1
     };
+  };
+
+  /**
+   * Reset demo.
+   */
+  g.reset = function () {
+    _step = null;
+    _item = null;
+    _cursor = 0;
   };
 
   // register events
@@ -194,7 +380,8 @@
 
     for (; i < len; i++) {
       hs[i].apply(v, args);
-    } 
+    }
   }
+
 
 }(this));
